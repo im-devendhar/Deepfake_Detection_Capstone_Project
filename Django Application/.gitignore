@@ -1,0 +1,16 @@
+venv
+.venv
+.vs
+.vscode
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+Thumbs.db
+models/*
+!models/Readme.txt
+uploaded_images/*
+!uploaded_images/Readme.txt
+uploaded_videos/*
+!uploaded_videos/Readme.txt
+

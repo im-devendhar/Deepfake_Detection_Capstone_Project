@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Prediction Result | Deepfake Detection{% endblock %}
+{%block content%}
+{%if no_faces%}
+<section class="result-screen">
+<div class="container">
+  <div class="logo text-center mb-4"><img src="{% static 'images/logo1.png'%}" alt="Deepfake Detection logo"></div>
+  <div class="alert alert-danger">
+    No faces detected. Cannot process the video.
+  </div>
+</div>
+</section>
+{%else%}
+<section class="result-screen">
+<div class="container">
+  <div class="result-header">
+    <div>
+      <p class="eyebrow">Analysis complete</p>
+      <h1>Prediction result</h1>
+    </div>
+    <a class="btn btn-outline-secondary" href="{%url 'ml_app:home'%}">Analyze Another</a>
+  </div>
+
+  <div class="result-layout">
+    <div class="video-panel" id="video-stage">
+      <video id="predict-media" controls>
+        <source src="{{MEDIA_URL}}{{original_video}}" type="video/mp4" codecs="avc1.4d002a" />
+      </video>
+    </div>
+
+    <aside class="prediction-panel {%if output == 'REAL'%}is-real{%else%}is-fake{%endif%}">
+      <span class="result-label">Result</span>
+      <strong>{{output}}</strong>
+      <span class="confidence">{{confidence}}% confidence</span>
+      {%if output == "REAL" %}
+      <img src="{% static 'images/thumpup.png'%}" alt="Real result">
+      {%else%}
+      <img src="{% static 'images/thumpdown.png'%}" alt="Fake result">
+      {%endif%}
+    </aside>
+  </div>
+
+  <div class="analysis-summary">
+    <div>
+      <span>Frames analyzed</span>
+      <strong>{{sequence_length}}</strong>
+    </div>
+    <div>
+      <span>Processing time</span>
+      <strong>{{processing_time}} seconds</strong>
+    </div>
+    <div>
+      <span>Model used</span>
+      <strong title="{{model_name}}">{{model_name}}</strong>
+    </div>
+  </div>
+
+  <div class="frame-section">
+    <div class="section-heading">
+      <h2>Frames Split</h2>
+      <span>{{preprocessed_images|length}} frames</span>
+    </div>
+    <div id="preprocessed_images" class="frame-strip">
+      {% for each_image in preprocessed_images %}
+      <img src="{%static each_image%}" class="preprocess" alt="Preprocessed frame" />
+      {%endfor%}
+    </div>
+  </div>
+
+  <div class="frame-section">
+    <div class="section-heading">
+      <h2>Face Cropped Frames</h2>
+      <span>{{faces_cropped_images|length}} frames</span>
+    </div>
+    <div id="faces_images" class="frame-strip frame-strip-small">
+      {% for each_image in faces_cropped_images %}
+      <img src="{%static each_image%}" class="faces" alt="Face crop frame" />
+      {%endfor%}
+    </div>
+  </div>
+<!--
+  <h3>Heat Maps</h3>
+  <div id="heatmap_images" class="col-12 mb-4 ">
+    {% for each_heatmap_image in heatmap_images %}
+    <img src="{%static each_heatmap_image%}" class="heat-map" width="100" height="150" />
+    {%endfor%}
+  </div>
+</div>
+-->
+</div>
+</section>
+{%endif%}
+{%endblock%}
+{%block js_cripts%}
+<script src="{%static 'js/face-api.min.js'%}"></script>
+<script>
+  $(document).ready(function () {
+    const video = document.getElementById("predict-media");
+    if (!video) {
+      return;
+    }
+
+    const modelsReady = Promise.all([
+      faceapi.nets.ssdMobilenetv1.loadFromUri('/static/json'),
+      faceapi.nets.tinyFaceDetector.loadFromUri("/static/json")
+    ]);
+
+    var detectionTimeout;
+    video.addEventListener("playing", () => {
+      var canvas;
+      if ($('canvas').length < 1) {
+        canvas = faceapi.createCanvasFromMedia(video);
+        document.getElementById("video-stage").append(canvas);
+      } else {
+        canvas = document.querySelector("canvas");
+      }
+      /* In order to be able to pause the video */
+      const displaySize = { width: video.clientWidth, height: video.clientHeight };
+      faceapi.matchDimensions(canvas, displaySize);
+
+      detectionTimeout = setInterval(async () => {
+        const detections = await faceapi.detectAllFaces(video);
+        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        resizedDetections.forEach((detection) => {
+          var result = '{{output}}';
+          var confidence = '{{confidence}}';
+          var drawOptions = {label: result.concat("  " , confidence , "%")};
+          if (result == 'REAL'){
+            drawOptions["boxColor"] = "#0f0";
+          }
+          else if (result == 'FAKE'){
+            drawOptions["boxColor"] = "#f00";
+          }
+          const drawBox = new faceapi.draw.DrawBox(detection.box, drawOptions);
+          drawBox.draw(canvas);
+        });
+      }, 250);
+    });
+
+    video.addEventListener("paused", () => {
+      clearInterval(detectionTimeout);
+    });
+
+    video.addEventListener("ended", () => {
+      clearInterval(detectionTimeout);
+    });
+  })
+</script>
+{%endblock%}

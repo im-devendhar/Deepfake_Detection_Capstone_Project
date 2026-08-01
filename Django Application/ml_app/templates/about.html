@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About | Deepfake Detection{% endblock %}
+{%block content%}
+<section class="about-hero">
+    <div class="container about-hero-inner">
+        <div>
+            <p class="eyebrow">Capstone project</p>
+            <h1>Deepfake video detection using deep learning</h1>
+            <p>This application analyzes video frames using a convolutional feature extractor and a recurrent sequence model to identify signs of manipulated content.</p>
+        </div>
+        <div class="architecture-badge">
+            <span>Model architecture</span>
+            <strong>ResNeXt + LSTM</strong>
+            <small>Spatial features and temporal analysis</small>
+        </div>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="container">
+        <div class="about-grid">
+            <div>
+                <p class="eyebrow">Project objective</p>
+                <h2>Make video authenticity analysis easier to understand.</h2>
+            </div>
+            <p class="about-copy">Deepfake videos can be difficult to identify through visual inspection alone. This project provides a web-based workflow where users upload a video, select the number of frames to analyze, and receive a REAL or FAKE prediction with a confidence score and frame-level visual context.</p>
+        </div>
+    </div>
+</section>
+
+<section class="workflow-section">
+    <div class="container">
+        <div class="section-heading about-heading">
+            <div>
+                <p class="eyebrow">System workflow</p>
+                <h2>From upload to prediction</h2>
+            </div>
+        </div>
+        <div class="process-grid">
+            <article>
+                <span>01</span>
+                <h3>Video upload</h3>
+                <p>The user selects a supported video and chooses the sequence length.</p>
+            </article>
+            <article>
+                <span>02</span>
+                <h3>Frame processing</h3>
+                <p>OpenCV extracts frames and prepares them for model inference.</p>
+            </article>
+            <article>
+                <span>03</span>
+                <h3>Feature extraction</h3>
+                <p>ResNeXt extracts spatial features from each selected frame.</p>
+            </article>
+            <article>
+                <span>04</span>
+                <h3>Sequence analysis</h3>
+                <p>The LSTM examines temporal patterns and produces the final prediction.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="stack-section">
+    <div class="container">
+        <div class="about-grid">
+            <div>
+                <p class="eyebrow">Technology stack</p>
+                <h2>Built as an end-to-end web application.</h2>
+            </div>
+            <div class="stack-list">
+                <span>Python</span>
+                <span>Django</span>
+                <span>PyTorch</span>
+                <span>OpenCV</span>
+                <span>ResNeXt</span>
+                <span>LSTM</span>
+                <span>HTML / CSS / JavaScript</span>
+            </div>
+        </div>
+        <div class="about-action">
+            <a class="btn btn-primary analyze-button" href="{% url 'ml_app:home' %}">Analyze a Video</a>
+        </div>
+    </div>
+</section>
+{%endblock%}

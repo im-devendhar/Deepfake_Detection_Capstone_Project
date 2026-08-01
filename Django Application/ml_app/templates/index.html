@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block title %}Analyze Video | Deepfake Detection{% endblock %}
+{%block content%}
+<section class="upload-screen">
+    <div class="container">
+        <div class="upload-layout">
+            <div class="intro-panel">
+                <div class="hero-brand">
+                    <span class="brand-mark">D</span>
+                    <span>Deepfake Detector</span>
+                </div>
+                <p class="eyebrow">Video authenticity analysis</p>
+                <h1>Check a video for deepfake signals.</h1>
+                <p class="lead">Upload a short video, choose the frame depth, and run the trained ResNeXt + LSTM model.</p>
+                <div class="feature-list">
+                    <span>Frame sampling</span>
+                    <span>Model confidence</span>
+                    <span>Visual result overlay</span>
+                </div>
+                <ol class="workflow-list" aria-label="Analysis workflow">
+                    <li><strong>1</strong><span>Select a video</span></li>
+                    <li><strong>2</strong><span>Choose frame depth</span></li>
+                    <li><strong>3</strong><span>Review the prediction</span></li>
+                </ol>
+            </div>
+
+            <form class="upload-panel" method="POST" enctype="multipart/form-data" name="video-upload" id="video-upload">
+                {%csrf_token%}
+                <input type="hidden" name="client_face_frames" id="client_face_frames">
+                <div class="preview-shell">
+                    <video controls id="videos">
+                        <source src="" id="video_source">
+                        Your browser does not support HTML5 video.
+                    </video>
+                    <label class="drop-zone" id="video-drop-zone" for="{{form.upload_video_file.id_for_label}}">
+                        <span class="upload-icon">+</span>
+                        <strong id="selected-file-name">Select a video</strong>
+                        <small id="selected-file-meta">Choose a file or drag it here</small>
+                        <span class="file-rules">MP4, AVI, MKV, WEBM and other common formats up to 100 MB</span>
+                    </label>
+                    {{form.upload_video_file}}
+                </div>
+
+                {%if form.upload_video_file.errors%}
+                {%for each_error in form.upload_video_file.errors%}
+                <div class="alert alert-danger mt-3 {{form.upload_video_file.id_for_label}}">
+                    {{each_error}}
+                </div>
+                {%endfor%}
+                {%endif%}
+
+                <div class="sequence-control">
+                    <div class="control-header">
+                        <label for="{{form.sequence_length.id_for_label}}">{{form.sequence_length.label}}</label>
+                        <span><strong id="slider-value"></strong> frames</span>
+                    </div>
+                    <input type="number" hidden="hidden" id="{{form.sequence_length.id_for_label}}" name="{{form.sequence_length.name}}">
+                    <div id="slider"></div>
+                    <div class="slider-ticks">
+                        <span>20</span>
+                        <span>40</span>
+                        <span>60</span>
+                        <span>80</span>
+                        <span>100</span>
+                    </div>
+                    {%if form.sequence_length.errors%}
+                    {%for each_error in form.sequence_length.errors%}
+                    <div class="alert alert-danger mt-3 {{form.sequence_length.id_for_label}}">
+                        {{each_error}}
+                    </div>
+                    {%endfor%}
+                    {%endif%}
+                </div>
+
+                <div id="upload-status" class="upload-status" aria-live="polite"></div>
+                <button id="videoUpload" type="submit" name="submit" class="btn btn-primary btn-block analyze-button" disabled>Analyze Video</button>
+            </form>
+        </div>
+    </div>
+</section>
+{%endblock%}
+{%block js_cripts%}
+<script src="{%static 'js/face-api.min.js'%}"></script>
+<script src="{% static 'js/script.js' %}?v=client-face-frames-8"></script>
+<script>
+    $(function () {
+        var sliderSequenceNumbers = [20,40,60,80,100];
+        var slider = $("div#slider").slider({
+            value: 1,
+            min: 0,
+            max: sliderSequenceNumbers.length-1,
+            slide: function (event, ui) {
+                $('#{{form.sequence_length.id_for_label}}').val(sliderSequenceNumbers[ui.value]);
+                $('#slider-value').html(sliderSequenceNumbers[ui.value]);
+            }
+        });
+        $("#{{form.sequence_length.id_for_label}}").val(sliderSequenceNumbers[$("#slider").slider("value")]);
+        $('#slider-value').html(sliderSequenceNumbers[$("#slider").slider("value")]);
+    });
+</script>
+{%endblock%}

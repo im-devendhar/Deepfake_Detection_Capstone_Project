@@ -1,0 +1,10 @@
+<nav class="app-navbar" aria-label="Main navigation">
+    <a class="app-brand" href="{%url 'ml_app:home'%}">
+        <span class="brand-mark">D</span>
+        <span>Deepfake Detection</span>
+    </a>
+    <div class="app-nav-links">
+        <a class="{% if request.path == '/' %}active{% endif %}" href="{%url 'ml_app:home'%}">Analyze</a>
+        <a class="{% if request.path == '/about/' %}active{% endif %}" href="{%url 'ml_app:about'%}">About</a>
+    </div>
+</nav>

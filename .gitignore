@@ -1,0 +1,25 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+.env
+.env.*
+!.env.example
+
+.idea/
+.vscode/
+.vs/
+
+*.sqlite3
+db.sqlite3
+Thumbs.db
+
+Django Application/models/*
+!Django Application/models/Readme.txt
+Django Application/uploaded_images/*
+!Django Application/uploaded_images/Readme.txt
+Django Application/uploaded_videos/*
+!Django Application/uploaded_videos/Readme.txt
