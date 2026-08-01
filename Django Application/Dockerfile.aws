@@ -1,0 +1,29 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_DEBUG=False
+ENV DJANGO_STATIC_ROOT=/app/staticfiles
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libglib2.0-0 \
+        libgl1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-aws.txt /app/requirements-aws.txt
+RUN python -m pip install --upgrade pip \
+    && pip install --no-cache-dir torch==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir -r requirements-aws.txt
+
+COPY . /app
+
+RUN mkdir -p /app/uploaded_images /app/uploaded_videos/app/uploaded_videos /app/models /app/staticfiles \
+    && python manage.py collectstatic --noinput
+
+EXPOSE 8000
+
+CMD ["gunicorn", "project_settings.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "1", "--timeout", "300"]
