@@ -41,7 +41,4 @@ Some of the dataset we used are listed below:
     
     **Note:** Labels for all the above preprocessed data is under `/label/Gobal_metadata.csv`
 
-  - Trained Models
-    - You can just download our [trained models](https://drive.google.com/drive/folders/1UX8jXUXyEjhLLZ38tcgOwGsZ6XFSLDJ-?usp=sharing) and run the predict file for prediction.
-    
-   ***If you need any help regarding the please contact us. We will be happy to help***
+
