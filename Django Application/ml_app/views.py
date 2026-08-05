@@ -300,31 +300,22 @@ def get_accurate_model(sequence_length):
     if sequence_length not in SUPPORTED_SEQUENCE_LENGTHS:
         return ""
 
-    model_name = []
-    sequence_model = []
     final_model = ""
+    sequence_models = []
     list_models = glob.glob(os.path.join(settings.PROJECT_DIR, "models", "*.pt"))
 
     for model_path in list_models:
-        model_name.append(os.path.basename(model_path))
-
-    for model_filename in model_name:
+        model_filename = os.path.basename(model_path)
         try:
+            accuracy = float(model_filename.split("_")[1])
             seq = model_filename.split("_")[3]
             if int(seq) == sequence_length:
-                sequence_model.append(model_filename)
+                sequence_models.append((accuracy, model_path))
         except (IndexError, ValueError):
             pass  # Handle cases where the filename format doesn't match expected
 
-    if len(sequence_model) > 1:
-        accuracy = []
-        for filename in sequence_model:
-            acc = filename.split("_")[1]
-            accuracy.append(acc)  # Convert accuracy to float for proper comparison
-        max_index = accuracy.index(max(accuracy))
-        final_model = os.path.join(settings.PROJECT_DIR, "models", sequence_model[max_index])
-    elif len(sequence_model) == 1:
-        final_model = os.path.join(settings.PROJECT_DIR, "models", sequence_model[0])
+    if sequence_models:
+        final_model = max(sequence_models, key=lambda item: item[0])[1]
     else:
         print("No model found for the specified sequence length.")  # Handle no models found case
 
