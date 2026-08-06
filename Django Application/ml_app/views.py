@@ -398,7 +398,7 @@ def predict_page(request):
         video_file_name_only = os.path.splitext(video_file_name)[0]
         # Production environment adjustments
         if not settings.DEBUG:
-            production_video_name = os.path.join('/home/app/staticfiles/', video_file_name.split('/')[3])
+            production_video_name = os.path.join('/home/app/staticfiles/', video_file_name )
             print("Production file name", production_video_name)
         else:
             production_video_name = video_file_name
