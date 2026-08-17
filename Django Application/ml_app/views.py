@@ -395,13 +395,12 @@ def predict_page(request):
         client_face_frames = decode_client_face_frames(request.session.get('client_face_frames', ''))
         path_to_videos = [video_file]
         video_file_name = os.path.basename(video_file)
+        print("SESSION file_name =", request.session['file_name'])
+        print("video_file =", video_file)
+        print("video_file_name =", video_file_name)
         video_file_name_only = os.path.splitext(video_file_name)[0]
         # Production environment adjustments
-        if not settings.DEBUG:
-            production_video_name = os.path.join('/home/app/staticfiles/', video_file_name )
-            print("Production file name", production_video_name)
-        else:
-            production_video_name = video_file_name
+        production_video_name = video_file_name
 
         if client_face_frames:
             prediction_tensor = build_prediction_tensor(client_face_frames, sequence_length)

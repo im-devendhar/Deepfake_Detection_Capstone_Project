@@ -14,4 +14,4 @@ RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 
 # Start your Django Gunicorn
- gunicorn project_settings.wsgi:application --bind=unix:$SOCKFILE --workers $NUM_WORKERS --timeout 600
+ gunicorn project_settings.wsgi:application --bind 0.0.0.0:8000 --workers $NUM_WORKERS --timeout 600
