@@ -2,7 +2,6 @@
   - You will be able to preprocess the dataset, train a pytorch model of your own, predict on new unseen data using your model.
   
 
-### Note: We Recommend using [Google Colab](https://colab.research.google.com/)  for running the above code.
 
 
  ## Dataset 
@@ -26,12 +25,8 @@ Some of the dataset we used are listed below:
   - Load the saved pytorch model
   - Predict the output based in trained weights.
   
-## Helpers 
-  - Code in the Helpers might be helpful for performing some important task  like :
-    - Converting Json label file to csv label
-    - Copying files from one directory to another
-    - Remove Audio altered files from Deepfake Detection Challenge dataset
-## Helpful Link
+
+
   - Preprocessed data
     - [Celeb-DF Fake processed videos](https://drive.google.com/drive/folders/1SxCb_Wr7N4Wsc-uvjUl0i-6PpwYmwN65?usp=sharing)
     - [Celeb-DF Real processed videos](https://drive.google.com/drive/folders/1g97v9JoD3pCKA2TxHe8ZLRe4buX2siCQ?usp=sharing)
